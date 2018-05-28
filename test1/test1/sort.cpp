@@ -1,120 +1,202 @@
 #include "stdafx.h"
 #include "sort.h"
+#include <algorithm>
+#include <iostream>
+#include <climits>
+#include <vector>
+
+using namespace std;
 
 extern void swap(int* a, int* b);
 
 //#define def_swap(x, y) x ^= y ^= x ^= y
 
-void merge(int arr[], int l, int m, int r)
+//O(n^2)   -> Selection, Insertion, Bubble
+void bubbleSort(int arr[], int n)
 {
-	int i, j, k;
-	int n1 = m - l + 1;
-	int n2 = r - m;
-
-	int *L = new int[n1], *R = new int[n2];
-
-	/* Copy data to temp arrays L[] and R[] */
-	for (i = 0; i < n1; i++)
-		L[i] = arr[l + i];
-	for (j = 0; j < n2; j++)
-		R[j] = arr[m + 1 + j];
-
-	/* Merge the temp arrays back into arr[l..r]*/
-	i = 0; // Initial index of first subarray
-	j = 0; // Initial index of second subarray
-	k = l; // Initial index of merged subarray
-	while (i < n1 && j < n2)
-	{
-		if (L[i] <= R[j])
-		{
-			arr[k] = L[i];
-			i++;
-		}
-		else
-		{
-			arr[k] = R[j];
-			j++;
-		}
-		k++;
-	}
-
-	/* Copy the remaining elements of L[], if there
-	are any */
-	while (i < n1)
-	{
-		arr[k] = L[i];
-		i++;
-		k++;
-	}
-
-	/* Copy the remaining elements of R[], if there
-	are any */
-	while (j < n2)
-	{
-		arr[k] = R[j];
-		j++;
-		k++;
-	}
+	int i, j;
+	for (i = 0; i < n - 1; i++)
+		for (j = 0; j < n - i - 1; j++)
+			if (arr[j] > arr[j + 1])
+				swap(&arr[j], &arr[j + 1]);
 }
 
-/* l is for left index and r is right index of the
-sub-array of arr to be sorted */
-void mergeSort(int arr[], int l, int r)
+void insertionSort(int arr[], int n)
 {
-	if (l < r)
+	int i, key, j;
+	for (i = 1; i < n; i++)
 	{
-		// Same as (l+r)/2, but avoids overflow for
-		// large l and h
-		int m = l + (r - l) / 2;
+		key = arr[i];
+		j = i - 1;
 
-		// Sort first and second halves
-		mergeSort(arr, l, m);
-		mergeSort(arr, m + 1, r);
-
-		merge(arr, l, m, r);
+		while (j >= 0 && arr[j] > key)
+		{
+			arr[j + 1] = arr[j];
+			j = j - 1;
+		}
+		arr[j + 1] = key;
 	}
 }
+void selectionSort(int arr[], int n)
+{
+	int i, j, min_idx;
 
+	// One by one move boundary of unsorted subarray
+	for (i = 0; i < n - 1; i++)
+	{
+		// Find the minimum element in unsorted array
+		min_idx = i;
+		for (j = i + 1; j < n; j++)
+			if (arr[j] < arr[min_idx])
+				min_idx = j;
 
+		// Swap the found minimum element with the first element
+		swap(&arr[min_idx], &arr[i]);
+	}
+}
 //==================================================================
-int partition(int arr[], int low, int high)
-{
-	int pivot = arr[high];    // pivot
-	int i = (low - 1);  // Index of smaller element
+//  O(NlogN) --> quick, Merge, Heap 
+vector<int> mergeSortedArray(vector<int> &A, vector<int> &B) {
+	vector<int> r;
+	int i = 0, j = 0;
 
-	for (int j = low; j <= high - 1; j++)
-	{
-		// If current element is smaller than or
-		// equal to pivot
-		if (arr[j] <= pivot)
-		{
-			i++;    // increment index of smaller element
-			swap(&arr[i], &arr[j]);
+	while (i < A.size() && j < B.size()) {
+		if (A[i] < B[j]) {
+			r.push_back(A[i++]);
+		}
+		else {
+			r.push_back(B[j++]);
 		}
 	}
-	swap(&arr[i + 1], &arr[high]);
-	return (i + 1);
+	while (i < A.size()) {
+		r.push_back(A[i++]);
+	}
+	while (j < B.size()) {
+		r.push_back(B[j++]);
+	}
+
+	return r;
+}
+vector<int> mergeSortedArray(vector<int> a) {
+	if (a.size() < 2)	return a;
+	int mid = a.size() / 2;
+	int l = mid, r = a.size() - mid;
+	vector<int> vl, vr;
+
+	for (int i = 0; i < mid; i++) {
+		vl.push_back(a[i]);
+	}
+	for (int i = mid; i < a.size(); i++) {
+		vr.push_back(a[i]);
+	}
+	vector<int> r1 = mergeSortedArray(vl);
+	vector<int> r2 = mergeSortedArray(vr);
+	return mergeSortedArray(r1, r2);
 }
 
-/* The main function that implements QuickSort
-arr[] --> Array to be sorted,
-low  --> Starting index,
-high  --> Ending index */
-void quickSort(int arr[], int low, int high)
-{
-	if (low < high)
-	{
-		/* pi is partitioning index, arr[p] is now
-		at right place */
-		int pi = partition(arr, low, high);
 
-		// Separately sort elements before
-		// partition and after partition
-		quickSort(arr, low, pi - 1);
-		quickSort(arr, pi + 1, high);
+void runMergeSortArray() {
+	int a[] = { 1, 7, 3, 4, 11 };
+	int b[] = { 2, 4, 5, 6 };
+	int sa = sizeof(a) / sizeof(a[0]);
+	int sb = sizeof(b) / sizeof(b[0]);
+	vector<int> v1(a, a + sa);
+	vector<int> v2(b, b + sb);
+
+	vector<int> r = mergeSortedArray(mergeSortedArray(v1), mergeSortedArray(v2));
+
+	for (int i : r) {
+		printf("%d ,", i);
 	}
 }
 
+
+
+
+void quickSort(int data[], int l, int r) {
+	int p = l, j = l, i = l;
+	if (l < r) {
+		while(++i <= r) {
+			if (data[i] < data[p]) {
+				swap(&data[++j], &data[i]);
+			}
+		}
+		swap(&data[p], &data[j]);
+		p = j;
+		quickSort(data, l, p - 1);
+		quickSort(data, p + 1, r);
+	}
+}
+
+void runQuickSort() {
+	int arr[7] = { 5,3, 7, 6, 1 , 2 ,4 };
+	for (int i = 0; i < 7; i++) printf("%d ", arr[i]);
+	printf("\n");
+	quickSort(arr, 0, 6);
+	for (int i = 0; i < 7; i++) printf("%d ", arr[i]);
+}
+
+
+void heapify(int arr[], int n, int i) {
+	int p = i;
+	int l = 2 * i + 1;
+	int r = 2 * i + 2;
+	if (l < n && arr[l] > arr[p]) p = l;
+	if (r < n && arr[r] > arr[p]) p = r;
+	if (p != i) {
+		swap(arr[i], arr[p]);
+		heapify(arr, n, p);
+	}
+}
+void heapSort(int arr[], int n) {
+	for (int i = n / 2 - 1; i >= 0; i--) {
+		heapify(arr, n, i);
+	}
+	for (int i = n - 1; i >= 0; i--) {
+		swap(arr[0], arr[i]);
+		heapify(arr, i, 0);
+	}
+}
+
+
+
+void HeapSearchFor(int arr[], int n) {
+	for (int i = 1; i < n; i++) {
+		int c = i;
+		do {
+			int p = (c - 1) / 2;
+			if (arr[p] < arr[c]) {
+				swap(arr[p], arr[c]);
+			}
+			c = p;
+		} while (c != 0);
+	}
+	for (int i = n - 1; i >= 0; i--) {
+		swap(arr[0], arr[i]);
+		int p = 0;
+		int c = 1;
+		do {
+			c = 2 * p + 1;
+			if (arr[c] < arr[c + 1] && c < i - 1) {
+				c++;
+			}
+			if (arr[p] < arr[c] && c < i) {
+				swap(arr[p], arr[c]);
+			}
+			p = c; 
+		} while (c < i);
+	}
+}
+
+
+void run_HeapSearch() {
+	int arr[7] = { 5,3, 7, 6, 1 , 2 ,4 };
+	for (int i = 0; i < 7; i++) printf("%d ", arr[i]);
+	printf("\n");
+	//HeapSearchFor(arr, 7);
+	heapSort(arr, 7);
+	for (int i = 0; i < 7; i++) printf("%d ", arr[i]) ;
+}
 
 //==================================================================
 using namespace std;
@@ -177,55 +259,83 @@ void radixsort(int arr[], int n)
 
 
 
-int* mergeSortedArray(int A[], int sa, int B[], int sb) {
-
-	int* res = new int[sa + sb];
-	int index = 0, i = 0, j = 0;
-
-	while (i < sa && j < sb) {
-		if (A[i] <= B[j]) {
-			res[index++] = A[i++];
+double findMedianSortedArrays(int *A, int sA, int *B, int sB) {
+	int m = sA;
+	int n = sB;
+	if (m > n) {
+		int* temp = A; A = B; B = temp;
+		int tmp = m; m = n; n = tmp;
+	}
+	int iMin = 0, iMax = m, halfLen = (m + n + 1) / 2;
+	while (iMin <= iMax) {
+		int i = (iMin + iMax) / 2;
+		int j = halfLen - i;
+		if (i < iMax && B[j - 1] > A[i]) {
+			iMin = iMin + 1; // i is too small
 		}
-		else {
-			res[index++] = B[j++];
+		else if (i > iMin && A[i - 1] > B[j]) {
+			iMax = iMax - 1; // i is too big
+		}
+		else { // i is perfect
+			int maxLeft = 0;
+			if (i == 0) { maxLeft = B[j - 1]; }
+			else if (j == 0) { maxLeft = A[i - 1]; }
+			else { maxLeft = max(A[i - 1], B[j - 1]); }
+			if ((m + n) % 2 == 1) { return maxLeft; }
+
+			int minRight = 0;
+			if (i == m) { minRight = B[j]; }
+			else if (j == n) { minRight = A[i]; }
+			else { minRight = min(B[j], A[i]); }
+
+			return (maxLeft + minRight) / 2.0;
 		}
 	}
-
-	while (i < sa) {
-		res[index++] = A[i++];
-	}
-
-	while (j < sb) {
-		res[index++] = B[j++];
-	}
-
-	return res;
+	return 0.0;
 }
 
-void runMergeSortArray() {
-	int a[] = { 1, 7, 3, 4, 11 };
-	int b[] = { 2, 4, 5, 6 };
+double findMedianSortedArrays2(int *A, int sA, int *B, int sB) {
+	int sC = sA + sB;
+	int *C = new int[sC];
+	int i = 0, j = 0, k = 0;
+
+	while (i < sA || j < sB) {
+		int a = INT32_MAX, b = INT32_MAX;
+
+		if (i < sA)	a = A[i];
+		if (j < sB) b = B[j];
+		if (a < b) {
+			C[k] = a;
+			i++;
+		}
+		else {
+			C[k] = b;
+			j++;
+		}
+		k++;
+	}
+
+	if (sC % 2 == 1) 		return C[sC / 2];
+	else		return (C[(sC / 2) - 1] + C[(sC / 2)]) / 2.0;
+}
+
+
+void run_findMedianSortedArrays() {
+	int a[] = { 1, 3 };
+	int b[] = { 2, 4, 5, 10 };
 	
-	int sa = sizeof(a) / sizeof(a[0]);
-	int sb = sizeof(b) / sizeof(b[0]);
-	/*
-	int *c = new int[sa + sb];
+	double mid = findMedianSortedArrays(a, sizeof(a) / sizeof(a[0]), b, sizeof(b) / sizeof(b[1]));
+	double mid2 = findMedianSortedArrays2(a, sizeof(a) / sizeof(a[0]), b, sizeof(b) / sizeof(b[1]));
 
-	int sc = sa + sb;
-	for (int i = 0; i < sa; i++)
-	{
-		c[i] = a[i];
-	}
-	for (int i = 0; i < sb; i++)
-	{
-		c[i + sa] = b[i];
-	}
+	cout << "mid1 : " << mid << endl;
+	cout << "mid2 : " << mid << endl;
+}
 
-	mergeSort(c, 0, sc-1);
-	*/
-	int *c = mergeSortedArray(a, sa, b, sb);
 
-	for(int i = 0; i < sa+sb; i++) {
-		printf("%d ", c[i]);
-	}
+void run_sort() {
+	//runMergeSortArray();
+	//runQuickSort();
+	run_HeapSearch();
+	//	run quick sort
+
 }

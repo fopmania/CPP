@@ -4,3 +4,5 @@ void quickSort(int arr[], int low, int high);
 void radixsort(int arr[], int n);
 
 void runMergeSortArray();
+void run_findMedianSortedArrays();
+void run_sort();

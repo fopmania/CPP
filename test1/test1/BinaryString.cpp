@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include <string.h>
+#include <iostream>
 #include <math.h>
 #include <bitset>
+
+using namespace std;
 
 int binConv(char *bin)
 {
@@ -118,3 +121,31 @@ int Longest_substring_with_equal_number() {
 	return 0;
 }
 
+
+void runFloatToBin(float a)
+{
+	int  integral, binaryInt = 0, i = 1;
+	float  binaryFract = 0, k = 0.1f, fractional, temp1, binaryTotal;
+
+	integral = (int)a;
+
+	fractional = a - (int)a;
+
+	while (integral>0)
+	{
+		binaryInt = binaryInt + (integral % 2) * i;
+		i = i * 10;
+		integral = integral / 2;
+	}
+
+	while (k>0.00000001)
+	{
+		temp1 = fractional * 2;
+		binaryFract = binaryFract + ((int)temp1)*k;
+		fractional = temp1 - (int)temp1;
+		k = k * 0.1f;
+	}
+
+	binaryTotal = (float)binaryInt + binaryFract;
+	printf("float : %f = Binary : %f", a, binaryTotal);
+}

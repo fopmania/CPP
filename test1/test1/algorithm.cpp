@@ -65,7 +65,7 @@ void comb(int n, int s, int q)
 }
 
 
-struct node
+typedef struct node
 {
 	int data;
 	struct node* left;

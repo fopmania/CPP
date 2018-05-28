@@ -1,21 +1,23 @@
 #include "stdafx.h"
 #include "linkedlist.h"
+#include <iostream>
 
+using namespace std;
 
-struct Node {
+typedef struct stNode {
 	int data;
-	struct Node *next;
+	struct stNode *next = NULL;
 };
-void segregateEvenOdd(struct Node **head_ref)
+void segregateEvenOdd(stNode **head_ref)
 {
-	struct Node *end = *head_ref;
-	struct Node *prev = NULL;
-	struct Node *curr = *head_ref;
+	stNode *end = *head_ref;
+	stNode *prev = NULL;
+	stNode *curr = *head_ref;
 
 	while (end->next != NULL)
 		end = end->next;
 
-	struct Node *new_end = end;
+	stNode *new_end = end;
 
 	while (curr->data % 2 != 0 && curr != end)
 	{
@@ -55,9 +57,9 @@ void segregateEvenOdd(struct Node **head_ref)
 	}
 	return;
 }
-void pushNodeBegin(struct Node** head_ref, int new_data)
+void pushNodeBegin(stNode** head_ref, int new_data)
 {
-	struct Node* new_node = new Node;
+	stNode* new_node = new stNode();
 
 	new_node->data = new_data;
 
@@ -66,10 +68,10 @@ void pushNodeBegin(struct Node** head_ref, int new_data)
 	(*head_ref) = new_node;
 }
 
-void pushNodeEnd(struct Node** head_ref, int new_data)
+void pushNodeEnd(stNode** head_ref, int new_data)
 {
-	struct Node* new_node = new Node;
-	struct Node* end = *head_ref;
+	stNode* new_node = new stNode();
+	stNode* end = *head_ref;
 	new_node->data = new_data;
 	new_node->next = NULL;
 
@@ -87,7 +89,7 @@ void pushNodeEnd(struct Node** head_ref, int new_data)
 }
 
 /* Function to print nodes in a given linked list */
-void printList(struct Node *node)
+void printList(stNode *node)
 {
 	while (node != NULL)
 	{
@@ -97,14 +99,14 @@ void printList(struct Node *node)
 }
 
 int Segregate_even_and_odd() {
-	struct Node *arrHead[100];
+	stNode *arrHead[100];
 	int T, N, V;
 	do {
 		scanf("%d", &T);
 	} while (T < 1 || T > 80);
 
 	for (int i = 0; i < T; i++) {
-		struct Node *head = NULL;
+		stNode *head = NULL;
 		do {
 			scanf("%d", &N);
 		} while (N < 1 || N > 100);
@@ -126,4 +128,147 @@ int Segregate_even_and_odd() {
 	}
 	//code
 	return 0;
+}
+
+void push(stNode **head_ref, int new_data) {
+	stNode *new_node = new stNode();
+	new_node->data = new_data;
+	new_node->next = (*head_ref);
+	(*head_ref) = new_node;
+
+}
+
+void pushEnd(stNode **head_ref, int new_data) {
+	stNode *cur = *head_ref;
+	stNode *new_node = new stNode();
+	new_node->data = new_data;
+
+	if (cur == NULL) {
+		*head_ref = new_node;
+	}
+	else {
+		while (cur->next != NULL) {
+			cur = cur->next;
+		}
+		cur->next = new_node;
+	}
+}
+
+
+int countNodes(stNode *s)
+{
+	int count = 0;
+	while (s != NULL)
+	{
+		count++;
+		s = s->next;
+	}
+	return count;
+}
+
+
+void swapNodes(stNode **head_ref, int x, int y)
+{
+	if (x == y) return;
+
+	stNode *prevX = NULL, *currX = *head_ref;
+	while (currX && currX->data != x)
+	{
+		prevX = currX;
+		currX = currX->next;
+	}
+
+	stNode *prevY = NULL, *currY = *head_ref;
+	while (currY && currY->data != y)
+	{
+		prevY = currY;
+		currY = currY->next;
+	}
+
+	if (currX == NULL || currY == NULL)
+		return;
+
+	if (prevX != NULL)
+		prevX->next = currY;
+	else 
+		*head_ref = currY;
+
+	if (prevY != NULL)
+		prevY->next = currX;
+	else 
+		*head_ref = currX;
+
+	stNode *temp = currY->next;
+	currY->next = currX->next;
+	currX->next = temp;
+}
+/*
+void swapNodes(stNode **head_ref, stNode *n1, stNode *n2) {
+	stNode *p1 = NULL, *p2 = NULL, *cur = *head_ref;
+	stNode *next1 = n1->next;
+	stNode *next2 = n2->next;
+
+
+	while (cur->next != NULL) {
+		if (p1 == NULL || n2 == NULL) {
+			if (cur->next == n1)		p1 = cur;
+			if (cur->next == n2)		p2 = cur;
+		}
+		else break;
+
+		cur = cur->next;
+	};
+
+	if (p1 != NULL) {
+		p1->next = n2;
+	}
+	if (p2 != NULL) {
+		p2->next = n1;
+	}
+	n1->next = next2;
+	n2->next = next1;
+}
+*/
+
+bool swapKth(stNode **head_ref, int k)
+{
+	int size = countNodes(*head_ref);
+	if (2 * k > size) {
+		return false;
+	}
+
+	stNode *cur = *head_ref, *n1 = NULL, *n2 = NULL;
+	int i1 = k, i2 = size - k + 1, count = 1;
+
+	while (cur != NULL)
+	{
+		if (n1 == NULL || n2 == NULL) {
+			if (i1 == count)		n1 = cur;
+			if (i2 == count)		n2 = cur;
+		}
+		else break;
+
+		cur = cur->next;
+		count++;
+	}
+	swap(n1->data, n2->data);
+	return true;
+}
+
+void run_swapping_kth_nodes() {
+	stNode *head = NULL;
+	for (int i = 1; i < 9; i++)
+		pushEnd(&head, i);
+
+	cout << "Original Linked List: ";
+	printList(head);
+
+	for (int k = 1; k < 9; k++)
+	{
+		cout << "\nModified List for k = " << k << endl;
+		if (swapKth(&head, k)) {
+			printList(head);
+		}else	cout << "LIST IS OF LESSER SIZE" << endl;
+	}
+
 }

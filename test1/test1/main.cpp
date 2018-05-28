@@ -11,6 +11,15 @@
 #include "Calculate.h"
 #include "Palindrome.h"
 #include "TextInput.h"
+#include "Lambda.h"
+#include "Substring.h"
+#include "integer.h"
+#include "Array.h"
+#include "Trees.h"
+#include "Matrix.h"
+#include "TowerHopper.h"
+#include "search_string.h"
+#include "search.h"
 
 void print_data(int *d, int n) {
 	for (int i = 0; i < n; i++) {
@@ -52,10 +61,37 @@ int main(void) {
 	//runMergeSortArray();
 
 	//std::cout << Palindrome::isPalindrome("Deleveled");
-
-
 	
-	test_find_if();
-	return 0;
+	//test_find_if();
+	//test_lambda_tuple();
+
+	//run_findMedianSortedArrays();
+	//run_addTwoNumbers();
+
+	//run_Palindrome();
+	
+	//runSubstring();
+
+	//run_ReverseInteger();
+	//run_AtoI();
+	//runFloatToBin(10.825);
+	//runNDK();
+	//run_swapping_kth_nodes();
+	//run_tree();
+
+	//run_getMaxSubtractionTwoNum();
+
+	//runSubString();
+
+	//runMatrix();
+	//runAmazonTest();
+
+	//runCalculate();
+
+	//run_sort();
+	//runTowerHoppper();
+
+	//run_search_string();
+	runSearch();
 }
 
